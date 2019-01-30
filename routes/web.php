@@ -14,3 +14,25 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group([
+        'middleware' => 'auth',
+        'prefix' => 'checklists/{checklistId}'
+    ], function() use ($router) {
+    $router->get('items', function ($checklistId) {
+        $checklist = App\Checklist::find($checklistId);
+        $items = $checklist->items;
+        $data = [
+            'type' => 'checklists',
+            'id' => $checklist->id,
+            'attributes' =>  [
+                'description' => $checklist->description,
+                'is_completed' => $checklist->is_completed,
+                'due' => $checklist->due,
+                'items' => $items,
+            ]
+        ];
+        $json = ['data' => $data];
+        return response()->json($json);
+    });
+});

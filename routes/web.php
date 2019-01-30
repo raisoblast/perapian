@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +20,13 @@ $router->group([
         'middleware' => 'auth',
         'prefix' => 'checklists/{checklistId}'
     ], function() use ($router) {
-    $router->get('items', function ($checklistId) {
+    $router->get('items', function ($checklistId, Request $request) {
         $checklist = App\Checklist::find($checklistId);
         $items = $checklist->items;
+        $sort = $request->input('sort');
+        if ($sort) {
+            $items = $checklist->items($sort)->get();
+        }
         $data = [
             'type' => 'checklists',
             'id' => $checklist->id,

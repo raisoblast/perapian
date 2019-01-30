@@ -29,8 +29,16 @@ class Checklist extends Model implements AuthenticatableContract, AuthorizableCo
     protected $hidden = [
     ];
 
-    public function items()
+    public function items($sort='')
     {
+        if ($sort) {
+            $dir = 'asc';
+            if ($sort[0] == '-') {
+                $sort = substr($sort, 1);
+                $dir = 'desc';
+            }
+            return $this->hasMany('App\ChecklistItem')->orderBy($sort, $dir);
+        }
         return $this->hasMany('App\ChecklistItem');
     }
 }
